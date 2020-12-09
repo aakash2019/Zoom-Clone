@@ -3,7 +3,7 @@ const videoGrid = document.getElementById('video-grid')
 const myPeer = new Peer(undefined, {
   path: '/peerjs',
   host: '/',
-  port: '443'
+  port: '3030'
 })
 let myVideoStream;
 const myVideo = document.createElement('video')
@@ -39,11 +39,12 @@ navigator.mediaDevices.getUserMedia({
     $("ul").append(`<li class="message"><b>user</b><br/>${message}</li>`);
     scrollToBottom()
   })
+  
+  socket.on('user-disconnected', userId => {
+    if (peers[userId]) peers[userId].close()
+  })
 })
 
-socket.on('user-disconnected', userId => {
-  if (peers[userId]) peers[userId].close()
-})
 
 myPeer.on('open', id => {
   socket.emit('join-room', ROOM_ID, id)
